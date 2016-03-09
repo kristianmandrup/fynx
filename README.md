@@ -50,7 +50,40 @@ The **Router** resolves URLs to *Views* relative to the application state. To av
 
 **Views** in Fynx are generally assumed to be React components, although nothing about Fynx limits you to using React for your views. Generally views should only contain state directly related to their appearance and propagate changes to the global application state by invoking *Actions*. It's possible to directly link React components to Fynx stores using [mixins](https://github.com/foss-haas/fynx-mixins) (for classic React components) or [decorators](https://github.com/foss-haas/fynx-decorators) (for ES2015 class-based React components) but views work best when they have no external dependencies.
 
+# Router and View
+
+Note that this library does not include any router or view logic and makes no assumptions. Fynx can be used as a pure "Flux" infrastructure for (almost) any View.
+
 # API
+
+## Actions (listeners/observers)
+
+By default [axn](https://www.npmjs.com/package/axn) is used to provide listenable actions/signals, however this can be substituted as needed.
+
+## Immuter
+
+The Immuter is responsible for creating an immutable data structure.
+By default Fynx uses `immutable.js` but it can be substituted as needed.
+
+The immuter must implement the following API:
+
+`immuter.fromJS(obj)`
+
+`immuter.is(val, otherVal)`, a function that can determine if two instances of this data structure are equal. (see [Object.is](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is))
+
+## Customizing API with factories
+
+To create an API using custom Action and Immuter factories, 
+use the `createApi` function as follows.
+
+`createApi(actionCreator = axn, immuter)`
+
+```js
+const fynx = createApi(myObserver, myImmuter)`
+
+fynx.createImmutableStore(...);
+fynx.createCollection(..);
+```
 
 ## createAction
 
