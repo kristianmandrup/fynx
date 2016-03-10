@@ -2,24 +2,24 @@
 import immutable from 'immutable';
 import createRawStore from './create-raw-store';
 
-immutable.isEmpty = immutable.is;
-
-export default function createImmutableStore(
+// default create using axn and immutable
+export function create(
   emptyValue = null,
   prepare = v => v
 ) {
   return factory()(emptyValue, prepare);
 };
 
-export function factory(actionCreator = axn, immuter = immutable) {
+// build custom create using action factory
+export function factory(actionCreator = axn, immuter = {stateManager: immutable) {
   return function(
       emptyValue = null,
       prepare = v => v
   ) {
     return createRawStore.factory(actionCreator)(
       emptyValue,
-      v => immutable.fromJS(prepare(v)),
-      immutable.isEmpty
+      v => immuter.stateManager.fromJS(prepare(v)),
+      immuter.stateManager.is
     );
   }
 }

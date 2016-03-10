@@ -3,21 +3,22 @@ import immutable from 'immutable';
 import Cursor from 'immutable/contrib/cursor';
 import axn from 'axn';
 
-export default function createCursorStore(emptyValue, prepare) {
+// default create using axn, immutable and Cursor
+export function create(emptyValue, prepare) {
   return factory()(emptyValue, prepare);
 }
 
-export function factory(actionFactory = axn) {
+export function factory(actionFactory = axn, immuter = {stateManager: immutable, cursor: Cursor}) {
   return function(emptyValue, prepare) {
     const action = actionFactory();
     const emptyAction = actionFactory();
     let state = (function (value) {
       function cursor(data) {
-        return Cursor.from(data, function (rawData) {
+        return immuter.cursor.from(data, function (rawData) {
           const newData = (
             rawData === null
             ? emptyValue
-            : immutable.fromJS(prepare ? prepare(rawData) : rawData)
+            : immuter.stateManager.fromJS(prepare ? prepare(rawData) : rawData)
           );
           state = cursor(newData);
           action(state);
@@ -26,7 +27,7 @@ export function factory(actionFactory = axn) {
         });
       }
       return cursor(value);
-    }(emptyValue || immutable.Map()));
+    }(emptyValue || immuter.Map()));
     function store(data) {
       if (data !== undefined) {
         state.update(() => data);
@@ -37,7 +38,7 @@ export function factory(actionFactory = axn) {
     store.listen = ::action.listen;
     store.listenOnce = ::action.listenOnce;
     store.unlisten = ::action.unlisten;
-    store.isEmpty = () => immutable.is(state, emptyValue);
+    store.isEmpty = () => immuter.is(state, emptyValue);
     store.isEmpty.listen = ::emptyAction.listen;
     store.isEmpty.listenOnce = ::emptyAction.listenOnce;
     store.isEmpty.unlisten = ::emptyAction.unlisten;

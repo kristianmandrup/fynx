@@ -1,12 +1,22 @@
 'use strict';
 import axn from 'axn';
 
-export default function createRawStore() {
-  return factory();
+// default create using axn
+export function create(
+    emptyValue = null,
+    prepare = v => v,
+    isEmpty = Object.is
+  ) {
+  return factory()(
+    emptyValue,
+    prepare,
+    isEmpty
+  );
 }
 
+// build custom create using action factory
 export function factory(actionFactory = axn) {
-  return function createRawStore(
+  return function create(
     emptyValue = null,
     prepare = v => v,
     isEmpty = Object.is

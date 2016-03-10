@@ -16,10 +16,10 @@ function _createActions(listener, specs) {
   return obj;
 }
 
-module.exports = function createActions(specs, listener) {
+export function create(specs, listener) {
   return _createActions(listener, specs);
 };
 
-module.exports.async = function createAsyncActions(specs, listener) {
+export function createAsync(specs, listener) {
   return _createActions(listener || axn.async, specs);
 };

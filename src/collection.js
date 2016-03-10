@@ -19,7 +19,7 @@ function imap(fn) {
   return result;
 }
 
-export default function(createStore, ...args) {
+export function create(createStore, ...args) {
   return factory()(createStore, ...args);
 }
 

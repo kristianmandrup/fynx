@@ -1,29 +1,34 @@
 'use strict';
 import axn from 'axn';
-import axns from './create-actions';
+import actions from './actions';
 
-export var createAction = axn;
-export var createActions = axns;
-export var createAsyncAction = axn.async;
-export var createAsyncActions = axns.async;
+export var createAxn = axn;
+export var createAsyncAxn = axn.async;
 
-export {createStore, factory as storeFactory} from './create-raw-store';
-export {createRawStore, factory as rawStoreFactory} from './create-raw-store';
-export {createCursorStore factory as cursorStoreFactory} from './create-cursor-store';
-export {createImmutableStore, factory as immutableStoreFactory} from './create-immutable-store';
-export {createCollection, factory as collectionFactory} from './create-collection';
+export var createActions = actions.create;
+export var createAsyncActions = actions.createAsync;
 
-export function createApi(actionCreator = axn, immuter) {
+// singular aliases
+export var createAction = createActions;
+export var createAsyncAction = createAsyncActions;
+
+export store from './raw-store';
+export rawStore from './raw-store';
+export cursorStore from './cursor-store';
+export immutableStore from './immutable-store';
+export collection from './collection';
+
+export function createApi(factories = {default: axn}) {
   return {
-    createAction: actionCreator;
-    createActions: axns;
-    createAsyncAction: actionCreator.async;
-    createAsyncActions: axns.async;
+    createAction: actions.create;
+    createActions: actions.create;
+    createAsyncAction: actions.createAsync
+    createAsyncActions: actions.createAsync;
 
-    createStore: storeFactory(actionCreator),
-    createRawStore: rawStoreFactory(actionCreator),
-    createImmutableStore: immutableStoreFactory(actionCreator, immuter),
-    createCollection: collectionFactory(actionCreator),
-    createCursorStore: cursorStoreFactory(actionCreator)
+    createStore: store.factory(factories.store || factories.default),
+    createRawStore: rawStore.factory(factories.rawStore || factories.default),
+    createImmutableStore: immutableStore.factory(factories.immutableStore || factories.default, factories.immuter),
+    createCollection: collection.factory(factories.collection || factories.default),
+    createCursorStore: cursorStore.factory(factories.cursorStore || factories.default)
   };
 }

@@ -56,9 +56,21 @@ Note that this library does not include any router or view logic and makes no as
 
 # API
 
+The API of Fynx has been reworked in order to be more pluggable in other (non-react) environments. In particular, we wanted to use Fynx with FuseJS and its Observables.
+
+Look into the code for more details. The README has not been completely updated just yet. Better yet, help out :)
+
 ## Actions (listeners/observers)
 
 By default [axn](https://www.npmjs.com/package/axn) is used to provide listenable actions/signals, however this can be substituted as needed.
+
+The following action methods must be implemented
+
+```
+store.listen = ::action.listen;
+store.listenOnce = ::action.listenOnce;
+store.unlisten = ::action.unlisten;
+```
 
 ## Immuter
 
@@ -68,8 +80,22 @@ By default Fynx uses `immutable.js` but it can be substituted as needed.
 The immuter must implement the following API:
 
 `immuter.fromJS(obj)`
+`immuter.Map()` returns an empty immutable map.
 
 `immuter.is(val, otherVal)`, a function that can determine if two instances of this data structure are equal. (see [Object.is](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is))
+
+## Cursor
+
+Used only by *CursorStore*.
+
+By default the cursor from *immutable* at `immutable/contrib/cursor` is used.
+You can supply your own (compatible) cursor when building a custom cursor store if you need.
+
+`cursorStore.factory(factory(actionFactory = axn, immuter = {stateManager: immutable, cursor: Cursor})`
+
+A cursor must implement:
+
+`cursor.from(data, function (rawData) => {...})`
 
 ## Customizing API with factories
 
